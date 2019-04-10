@@ -1,0 +1,18 @@
+#
+# this is your module manifest and used by Titanium
+# during compilation, packaging, distribution, etc.
+#
+version: 1.0.0
+apiversion: 4
+architectures: arm64-v8a armeabi-v7a x86
+description: ti.mediaresize
+author: Rafael Peñates
+license: Specify your license
+copyright: Copyright (c) 2019 by Your Company
+
+# these should not be edited
+name: ti.mediaresize
+moduleid: com.rpenates.timediaresize
+guid: 50a597b5-065b-4f81-a112-4e98a088196d
+platform: android
+minsdk: 7.5.0.GA

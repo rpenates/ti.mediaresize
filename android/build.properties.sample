@@ -1,0 +1,3 @@
+titanium.platform=/Users/<current_user>/<titanium_sdk_path>/mobilesdk/osx/7.5.0.GA/android
+android.platform=/Users/<current_user>/<android_sdk>/platforms/android-23
+google.apis=/Users/<current_user>/<android_sdk>/add-ons/addon-google_apis-google-23
