@@ -1,3 +1,6 @@
 Thumbs.db
 .DS_Store
 android/build.properties
+android/build
+android/.classpath
+android/java-sources.txt
