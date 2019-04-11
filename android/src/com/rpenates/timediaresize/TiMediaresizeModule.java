@@ -8,12 +8,27 @@
  */
 package com.rpenates.timediaresize;
 
+import java.util.StringTokenizer;
+
+import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollModule;
+import org.appcelerator.kroll.KrollFunction;
+import org.appcelerator.kroll.KrollObject;
 import org.appcelerator.kroll.annotations.Kroll;
 
 import org.appcelerator.titanium.TiApplication;
+
+import android.graphics.Bitmap;
+
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.kroll.common.TiConfig;
+import pyxis.uzuki.live.mediaresizer.MediaResizer;
+import pyxis.uzuki.live.mediaresizer.MediaResizerGlobal;
+import pyxis.uzuki.live.mediaresizer.data.ResizeOption;
+import pyxis.uzuki.live.mediaresizer.data.VideoResizeOption;
+import pyxis.uzuki.live.mediaresizer.model.MediaType;
+import pyxis.uzuki.live.mediaresizer.model.ScanRequest;
+import pyxis.uzuki.live.mediaresizer.model.VideoResolutionType;
 
 
 @Kroll.module(name="TiMediaresize", id="com.rpenates.timediaresize")
@@ -37,30 +52,122 @@ public class TiMediaresizeModule extends KrollModule
 	{
 		Log.d(LCAT, "inside onAppCreate");
 		// put module init code that needs to run when the application is created
+		MediaResizerGlobal.INSTANCE.initializeApplication(app);
 	}
 
-	// Methods
 	@Kroll.method
-	public String example()
-	{
-		Log.d(LCAT, "example called");
-		return "hello world";
+	public void resizeImage(KrollDict options) {
+		if (options != null) {
+
+			// Builder variables
+			int resWidth = 0;
+			int resheight = 0;
+			int quality = 0;
+			Boolean bitmapFilter = false;
+
+			ImageResizeOption imageOptions;
+			ResizeOption resizeOptions;
+			if (options.containsKey("resolution")){
+				String resolutionString = options.getString("resolution");
+				String[] resolutionArray = resolutionString.split("x");
+				resWidth = Integer.parseInt(resolutionArray[0]);
+				resheight = Integer.parseInt(resolutionArray[1]);
+				String originPath = "";
+				String destinationPath = "";
+			}
+
+			if (options.containsKey("quality")){
+				quality = options.getInt("quality");
+			}
+
+			imageOptions = new ImageResizeOption.Builder()
+				.setImageprocessMode(ImageMode.ResizeAndCompress)
+				.setImageResolution(resWidth, resheight)
+				.setBitmapFilter(bitmapFilter)
+				.setCompressFormat(Bitmap.CompressFormat.JPEG)
+				.setCompressQuality(quality)
+				.setScanRequest(ScanRequest.TRUE)
+				.build();
+
+			resizeOptions = new ResizeOption.Builder()
+				.setMediaType(MediaType.IMAGE)
+				.setImageResizeOption(imageOptions)
+				.setTargetPath(destinationPath)
+				.setOutputPath(imageFile.getAbsolutePath())
+				.setCallback(new F2() {
+					@Override
+					public void invoke (Object code, Object output ){
+						// if (options.containsKey("callback")){
+						// 	KrollFunction callback = options.getKrollObject("callback");
+						// 	KrollObject result;
+						// 	callback.call(result, options); // define payload
+						// }
+						Log.d(LCAT, "onInvoke execution");
+					}
+				}).build();
+				
+			MediaResizer.process(resizeOptions);
+
+		} else {
+			Log.e(LCAT, "No available options, skipping...");
+		}
 	}
 
-	// Properties
 	@Kroll.method
-	@Kroll.getProperty
-	public String getExampleProp()
-	{
-		Log.d(LCAT, "get example property");
-		return "hello world";
-	}
+	public void resizeVideo(KrollDict options) {
+		if (options != null) {
 
+			// Builder variables
+			int resWidth = 640;
+			int resheight = 480;
+			int quality = 0;
+			Boolean bitmapFilter = false;
 
-	@Kroll.method
-	@Kroll.setProperty
-	public void setExampleProp(String value) {
-		Log.d(LCAT, "set example property: " + value);
+			VideoResizeOption videoOptions;
+			ResizeOption resizeOptions;
+			if (options.containsKey("resolution")){
+				String resolutionString = options.getString("resolution");
+				String[] resolutionArray = resolutionString.split("x");
+				resWidth = Integer.parseInt(resolutionArray[0]);
+				resheight = Integer.parseInt(resolutionArray[1]);
+				String originPath = "";
+				String destinationPath = "";
+			}
+
+			if (options.containsKey("quality")){
+				quality = options.getInt("quality");
+			}
+
+			videoOptions = new VideoResizeOption.Builder()
+                .setVideoResolutionType(VideoResolutionType.AS480)
+                .setVideoBitrate(1000 * 1000)
+                .setAudioBitrate(128 * 1000)
+                .setAudioChannel(1)
+                .setScanRequest(ScanRequest.TRUE)
+                .build();
+
+			resizeOptions = new ResizeOption.Builder()
+				.setMediaType(MediaType.VIDEO)
+				.setVideoResizeOption(resizeOption)
+				.setTargetPath(path)
+				.setOutputPath(imageFile.getAbsolutePath())
+				.setCallback(new F3() {
+					@Override
+					public void invoke (Object code, Object path, Object output ){
+						// if (options.containsKey("callback")){
+						// 	KrollFunction callback = options.getKrollObject("callback");
+						// 	KrollObject result;
+						// 	callback.call(result, options); // define payload
+						// }
+						Log.d(LCAT, "onInvoke execution");
+					}
+				}).build();
+				
+			MediaResizer.process(resizeOptions);
+
+		} else {
+			Log.e(LCAT, "No available options, skipping...");
+		}
 	}
 
 }
